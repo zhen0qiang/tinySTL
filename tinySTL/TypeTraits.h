@@ -73,7 +73,7 @@ namespace tinySTL {
 	};
 
 	template<>
-	struct _type_traits<wchart_t>
+	struct _type_traits<wchar_t>
 	{
 		typedef _true_type		has_trivial_default_constructor;
 		typedef _true_type		has_trivial_copy_constructor;
