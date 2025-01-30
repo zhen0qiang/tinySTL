@@ -23,11 +23,13 @@ namespace tinySTL {
 		public:
 			static T* allocate();
 			static T* allocate(size_t n);
+
 			static void deallocate(T* p);
 			static void deallocate(T* p, size_t n);
 
 			static void construct(T* p);
 			static void construct(T* p, const T& value);
+			
 			static void destroy(T* p);
 			static void destroy(T* frist, T* last);
 	};
@@ -36,6 +38,40 @@ namespace tinySTL {
 	T* allocator<T>::allocate() {
 		return static_cast<T*>(alloc::allocate(sizeof(T)));
 	}
+	template<class T>
+	T* allocator<T>::allocate(size_t n) {
+		return static_cast<T*>(alloc::allocate(n * sizeof(T)));
+	}
 
+	template<class T>
+	void allocator<T>::deallocate(T* p) {
+		alloc::deallocate(static_cast<void*>(p), sizeof(T));
+	}
+	template<class T>
+	void allocator<T>::deallocate(T* p, size_t n) {
+		if (n==0) return;
+		alloc::deallocate(static_cast<void*>(p), n * sizeof(T));
+	}
+
+	template<class T>
+	void allocator<T>::construct(T* p) {
+		new(p) T();
+	}
+	template<class T>
+	void allocator<T>::construct(T* p, const T& value) {
+		new(p) T(value);
+	}
+
+	template<class T>
+	void allocator<T>::destroy(T* p) {
+		p->~T();
+	}
+	template<class T>
+	void allocator<T>::destroy(T* frist, T* last) {
+		for (; frist!= last; ++frist) {
+			frist->~T();
+		}
+	}
+} // namespace tinySTL
 
 #endif // _ALLOCATOR_H_
