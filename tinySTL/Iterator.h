@@ -9,13 +9,13 @@ namespace tinySTL {
 	struct bidirectional_iterator_tag : public forward_iterator_tag {};
 	struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
-	template<class T, class Distance> struct input_iterator 
+	template<class T, class Distance> struct input_iterator
 	{
 		typedef input_iterator_tag     iterator_category;
 		typedef T                     value_type;
 		typedef Distance              difference_type;
-		typedef T*                    pointer;
-		typedef T&                    reference;
+		typedef T* pointer;
+		typedef T& reference;
 	};
 
 	struct output_iterator
@@ -32,28 +32,28 @@ namespace tinySTL {
 		typedef forward_iterator_tag   iterator_category;
 		typedef T                     value_type;
 		typedef Distance              difference_type;
-		typedef T*                    pointer;
-		typedef T&                    reference;
+		typedef T* pointer;
+		typedef T& reference;
 	};
 	template<class T, class Distance> struct bidirectional_iterator
 	{
 		typedef bidirectional_iterator_tag iterator_category;
 		typedef T                     value_type;
 		typedef Distance              difference_type;
-		typedef T*                    pointer;
-		typedef T&                    reference;
+		typedef T* pointer;
+		typedef T& reference;
 	};
 	template<class T, class Distance> struct random_access_iterator
 	{
 		typedef random_access_iterator_tag iterator_category;
 		typedef T                     value_type;
 		typedef Distance              difference_type;
-		typedef T*						pointer;
-		typedef T&					reference;
+		typedef T* pointer;
+		typedef T& reference;
 	};
 
 
-	template<class Category, class T, class Distance = ptrdiff_t, 
+	template<class Category, class T, class Distance = ptrdiff_t,
 		class Pointer = T*, class Reference = T&>
 	struct iterator
 	{
@@ -72,6 +72,32 @@ namespace tinySTL {
 		typedef typename Iterator::pointer           pointer;
 		typedef typename Iterator::reference         reference;
 	};
+	template<class T>
+	struct iterator_traits<T*>
+	{
+		typedef random_access_iterator_tag iterator_category;
+		typedef T                          value_type;
+		typedef ptrdiff_t                  difference_type;
+		typedef T* pointer;
+		typedef T& reference;
+	};
 
-
+	template<class Iterator>
+	inline typename iterator_traits<Iterator>::iterator_category
+		iterator_category(const Iterator& It)
+	{
+		typedef typename iterator_traits<Iterator>::iterator_category category;
+		return category();
+	};
+	template<class Iterator>
+	inline typename iterator_traits<Iterator>::value_type*
+		value_type(const Iterator& It) {
+		return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
+	};
+	template<class Iterator>
+	inline typename iterator_traits<Iterator>::difference_type*
+		difference_type(const Iterator& It) {
+		return static_cast<typename iterator_traits<Iterator>::difference_type*>(0);
+	};
+}
 #endif // !_ITERATOR_H_

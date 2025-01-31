@@ -275,3 +275,42 @@ void* p2 = allocator.reallocate(p1, 16, 32);
    - 适合用于实现容器类或高频小块内存分配的场景。
 
 需要注意的是，这段代码是一个简化版本，实际应用中可能需要进一步优化和扩展（例如线程安全支持）。
+
+## Iterator.h
+
+1. 五种迭代器标签（iterator tags）：
+
+   - `input_iterator_tag`
+   - `output_iterator_tag`
+   - `forward_iterator_tag`，继承自 `input_iterator_tag`
+   - `bidirectional_iterator_tag`，继承自 `forward_iterator_tag`
+   - `random_access_iterator_tag`，继承自 `bidirectional_iterator_tag`
+
+   这些标签用于区分不同类型的迭代器。
+
+2. 五种迭代器模板（iterator templates）：
+
+   - `input_iterator`
+   - `output_iterator`
+   - `forward_iterator`
+   - `bidirectional_iterator`
+   - `random_access_iterator`
+
+   每种模板都定义了一些类型别名（typedefs），这些别名描述了迭代器的行为特性，比如 `iterator_category`、`value_type`、`difference_type`、`pointer` 和 `reference`。
+
+3. `iterator` 模板：
+
+   - 这是一个更通用的迭代器模板，可以指定迭代器的类型别名。
+
+4. `iterator_traits` 模板：
+
+   - 用于提取迭代器的类型别名。
+   - 提供了对于常规迭代器、指针类型 `T*` 的特化版本。
+
+5. 三个辅助函数模板：
+
+   - `iterator_category`：返回迭代器的分类标签。
+   - `value_type`：返回迭代器所指向值的类型。
+   - `difference_type`：返回迭代器之间距离的类型。
+
+这些定义和模板主要用于实现一个简单的 C++ 库中的迭代器功能，有助于对不同类型的迭代器进行统一处理和操作。
