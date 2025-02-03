@@ -64,6 +64,41 @@ namespace tinySTL {
 			return temp;
 		}
 
+		reference operator[] (difference_type n) {
+			return base()[-n - 1];
+		}
+		reverse_iterator_t operator + (difference_type n) const;
+		reverse_iterator_t operator - (difference_type n) const;
+		reverse_iterator_t& operator += (difference_type n);
+		reverse_iterator_t& operator -= (difference_type n);
+		
+	private:
+		Iterator advanceNStep(Iterator it, difference_type n, bool right, random_access_iterator_tag) {
+			if (right) {
+				it += n;
+			}
+			else {
+				it -= n;
+			}
+			return it;
+		}
+
+		Iterator advanceNStep(Iterator it, difference_type n, bool right, bidirectional_iterator_tag) {
+			difference_type i;
+			difference_type absN = n>=0 ? n : -n;
+			if ((right && n >= 0) || (!right && n < 0)) {
+				for (i = 0; i < absN; ++i) {
+					it = it + 1;
+				}
+			}
+			else if ((right && n < 0) || (!right && n >= 0)) {
+				for (i = 0; i < absN; ++i) {
+					it = it - 1;
+				}
+			}
+			return it;
+		}
+	public:
 
 
 
