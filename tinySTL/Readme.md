@@ -278,40 +278,158 @@ void* p2 = allocator.reallocate(p1, 16, 32);
 
 ## Iterator.h
 
-1. 五种迭代器标签（iterator tags）：
+### 概述
 
-   - `input_iterator_tag`
-   - `output_iterator_tag`
-   - `forward_iterator_tag`，继承自 `input_iterator_tag`
-   - `bidirectional_iterator_tag`，继承自 `forward_iterator_tag`
-   - `random_access_iterator_tag`，继承自 `bidirectional_iterator_tag`
+`Iterator.h` 是一个头文件，定义了 tinySTL 库中的迭代器相关结构和模板类。tinySTL 是一个小型的、简化的标准模板库实现，这里定义的内容与迭代器类型及其特性相关，为后续容器和算法的设计与实现提供基础支持。
 
-   这些标签用于区分不同类型的迭代器。
+### 结构定义
 
-2. 五种迭代器模板（iterator templates）：
+#### 迭代器标签结构
 
-   - `input_iterator`
-   - `output_iterator`
-   - `forward_iterator`
-   - `bidirectional_iterator`
-   - `random_access_iterator`
+在 tinySTL 中，迭代器被分类为五种不同类型，每种类型对应一个标签结构。这些标签结构用于区分不同迭代器的能力和特性，是实现迭代器分类操作的基础。以下是定义的迭代器标签结构：
 
-   每种模板都定义了一些类型别名（typedefs），这些别名描述了迭代器的行为特性，比如 `iterator_category`、`value_type`、`difference_type`、`pointer` 和 `reference`。
+- `input_iterator_tag`: 输入迭代器标签，最基础的迭代器类型，只能向前遍历，提供只读访问。
+- `output_iterator_tag`: 输出迭代器标签，只能向前遍历，提供只写访问。
+- `forward_iterator_tag`: 前向迭代器标签，继承自 `input_iterator_tag`，向前遍历，读写访问。
+- `bidirectional_iterator_tag`: 双向迭代器标签，继承自 `forward_iterator_tag`，支持双向遍历（即向前和向后）。
+- `random_access_iterator_tag`: 随机访问迭代器标签，继承自 `bidirectional_iterator_tag`，支持随机访问，可以像数组一样通过索引访问元素。
 
-3. `iterator` 模板：
+### 迭代器模板类
 
-   - 这是一个更通用的迭代器模板，可以指定迭代器的类型别名。
+定义了对应的五种迭代器类型，具体如下：
 
-4. `iterator_traits` 模板：
+- `input_iterator<T, Distance>`: 输入迭代器模板类，其中 `T` 是迭代器所指向的元素类型，`Distance` 是迭代器之间的距离类型。该类的定义中包含了迭代器的类别、值类型、距离类型、指针类型和引用类型。
+- `output_iterator`: 输出迭代器结构体。与 `input_iterator` 类似，但它的 `value_type`、`difference_type`、`pointer` 和 `reference` 都被定义为 `void`，用以表示它是一个只写的迭代器。
+- `forward_iterator<T, Distance>`: 前向迭代器模板类。
+- `bidirectional_iterator<T, Distance>`: 双向迭代器模板类。
+- `random_access_iterator<T, Distance>`: 随机访问迭代器模板类。
 
-   - 用于提取迭代器的类型别名。
-   - 提供了对于常规迭代器、指针类型 `T*` 的特化版本。
+这些迭代器模板类除了定义了各自的迭代器类别外，还定义了它们所指向的元素类型、元素之间的距离类型、指针类型以及引用类型。
 
-5. 三个辅助函数模板：
+### `iterator` 结构体
 
-   - `iterator_category`：返回迭代器的分类标签。
-   - `value_type`：返回迭代器所指向值的类型。
-   - `difference_type`：返回迭代器之间距离的类型。
+`iterator` 结构体是一个通用的迭代器模板类，它接受五个模板参数，分别是迭代器类别、值类型、距离类型、指针类型和引用类型。通过这个结构体，可以创建一个自定义的迭代器类型，该迭代器具有指定的类别以及对应的属性。
 
-这些定义和模板主要用于实现一个简单的 C++ 库中的迭代器功能，有助于对不同类型的迭代器进行统一处理和操作。
+### `iterator_traits` 结构体
 
+`iterator_traits` 是一个模板结构体，用于提取迭代器的特性。它可以是一个普通的迭代器类型，也可以是一个指针类型。对于普通的迭代器类型，`iterator_traits` 可以直接通过 `typedef` 语法提取迭代器类中的类型定义。而对于指针类型，`iterator_traits` 提供了额外的特化版本，将指针类型视为随机访问迭代器，并定义了相应的 `value_type`、`difference_type`、`pointer` 和 `reference` 类型。
+
+### 函数定义
+
+定义了三个函数模板，用于获取迭代器的类别、值类型指针和距离类型指针：
+
+- `iterator_category(const Iterator& It)`: 返回迭代器的类别。
+- `value_type(const Iterator& It)`: 返回迭代器指向的元素类型的指针。
+- `difference_type(const Iterator& It)`: 返回迭代器之间的距离类型的指针。
+
+这些函数模板使用了 `iterator_traits` 结构体来提取迭代器的特性，然后返回相应的类型信息。它们被设计为 `inline` 函数，以提高访问性能。
+
+### 代码结构
+
+- 使用 `#ifndef`、`#define` 和 `#endif` 来确保头文件只被包含一次，避免重复定义。
+- 通过 `namespace tinySTL` 将所有定义封装在一个命名空间中，防止与其他库或代码中的定义产生冲突。
+
+### 示例
+
+```cpp
+#include "Iterator.h"
+
+int main() {
+    tinySTL::random_access_iterator<int, int> myIterator;
+    // 使用 iterator_traits 提取迭代器特性
+    typedef typename tinySTL::iterator_traits<decltype(myIterator)>::value_type ValueType;
+    typedef typename tinySTL::iterator_traits<decltype(myIterator)>::iterator_category IteratorCategory;
+    // 输出迭代器特性
+    std::cout << "Value Type: " << typeid(ValueType).name() << std::endl;
+    std::cout << "Iterator Category: " << typeid(IteratorCategory).name() << std::endl;
+}
+```
+
+DiffCopyInsert
+
+这段示例代码中，我们定义了一个 `random_access_iterator` 类型的迭代器 `myIterator`，然后使用 `iterator_traits` 提取它的值类型和迭代器类别，并将这些信息输出到控制台。
+
+### 总结
+
+`Iterator.h` 文件在 tinySTL 库中扮演着重要的角色，它定义了迭代器的类型和特性，为库中的容器和算法提供了必要的支持。通过合理的结构设计和模板使用，使得迭代器的使用更加灵活和高效。
+
+## ReverseIterator.h
+
+这个文件定义了一个名为`reverse_iterator_t`的模板类，属于一个名为`TinySTL`的命名空间。`reverse_iterator_t`是一个反向迭代器，它允许用户以反向顺序遍历一个序列容器（如vector、list等）中的元素。下面是对这个文件功能的详细文档：
+
+### 文件概述
+
+**文件名：** ReverseIterator.h  
+**命名空间：** TinySTL  
+**描述：** 反向迭代器类定义，允许用户以反向顺序遍历容器中的元素。
+
+### 模板类定义
+
+**类名：** `reverse_iterator_t`  
+**作用：** 提供对容器元素的反向访问。
+
+### 类成员类型定义
+
+- `iterator_type`: 原始迭代器类型。
+- `iterator_category`: 迭代器类别，从原始迭代器类型中获取。
+- `value_type`: 迭代器指向的值类型，从原始迭代器类型中获取。
+- `difference_type`: 迭代器之间的差异类型，从原始迭代器类型中获取。
+- `pointer`: 迭代器指向的值的指针类型。
+- `const_pointer`: 迭代器指向的常量值的指针类型。
+- `reference`: 迭代器指向的值的引用类型。
+- `const_reference`: 迭代器指向的常量值的引用类型。
+
+### 私有成员变量
+
+- `base_`: 保存原始迭代器的位置，指向容器中当前反向迭代器位置的下一个元素。
+- `cur_`: 保存当前反向迭代器的位置。
+
+### 构造函数、复制构造函数及析构函数
+
+- **默认构造函数：** `reverse_iterator_t() :base_(0), cur_(0){}`  
+  初始化`base_`和`cur_`为0，表示空迭代器。
+  
+- **显式构造函数：** `explicit reverse_iterator_t(const iterator_type& it) :base_(it){ ... }`  
+  使用原始迭代器`it`初始化反向迭代器，`cur_`指向`it`的前一个位置。
+  
+- **模板复制构造函数：** `template <class Iter> reverse_iterator_t(const reverse_iterator_t<Iter>& rev_it){ ... }`  
+  使用另一个类型的反向迭代器初始化当前反向迭代器。
+
+### 成员函数
+
+- `iterator_type base()`: 返回原始迭代器的位置。
+- `reference operator*()`, `const_reference operator*() const`: 返回当前反向迭代器所指向的元素的引用。
+- `pointer operator->()`, `const_pointer operator->() const`: 返回当前反向迭代器所指向的元素的指针。
+- `reverse_iterator_t& operator++()`: 前缀自增操作符，使反向迭代器向前移动一个位置。
+- `reverse_iterator_t& operator++(int)`: 后缀自增操作符，使反向迭代器向前移动一个位置，返回移动前的迭代器。
+- `reverse_iterator_t& operator--()`: 前缀自减操作符，使反向迭代器向后移动一个位置。
+- `reverse_iterator_t operator--(int)`: 后缀自减操作符，使反向迭代器向后移动一个位置，返回移动前的迭代器。
+- `reference operator[](difference_type n)`: 通过索引访问反向迭代器位置的元素。
+- `reverse_iterator_t operator+(difference_type n) const`: 返回当前反向迭代器加上偏移量后的新位置。
+- `reverse_iterator_t& operator+=(difference_type n)`: 当前反向迭代器加上偏移量。
+- `reverse_iterator_t operator-(difference_type n) const`: 返回当前反向迭代器减去偏移量后的新位置。
+- `reverse_iterator_t& operator-=(difference_type n)`: 当前反向迭代器减去偏移量。
+
+### 私有成员函数
+
+- `Iterator advanceNStep(Iterator it, difference_type n, bool right, random_access_iterator_tag)`: 用于随机访问迭代器向前或向后移动n个位置。
+- `Iterator advanceNStep(Iterator it, difference_type n, bool right, bidirectional_iterator_tag)`: 用于双向迭代器向前或向后移动n个位置。
+
+### 友元函数
+
+- `bool operator==(const reverse_iterator_t<Iterator>& lhs, const reverse_iterator_t<Iterator>& rhs)`: 比较两个反向迭代器是否相等。
+- `bool operator!=(const reverse_iterator_t<Iterator>& lhs, const reverse_iterator_t<Iterator>& rhs)`: 比较两个反向迭代器是否不相等。
+- `bool operator<(const reverse_iterator_t<Iterator>& lhs, const reverse_iterator_t<Iterator>& rhs)`: 比较两个反向迭代器的大小，判断lhs是否小于rhs。
+- `bool operator<=(const reverse_iterator_t<Iterator>& lhs, const reverse_iterator_t<Iterator>& rhs)`: 比较两个反向迭代器的大小，判断lhs是否小于等于rhs。
+- `bool operator>(const reverse_iterator_t<Iterator>& lhs, const reverse_iterator_t<Iterator>& rhs)`: 比较两个反向迭代器的大小，判断lhs是否大于rhs。
+- `bool operator>=(const reverse_iterator_t<Iterator>& lhs, const reverse_iterator_t<Iterator>& rhs)`: 比较两个反向迭代器的大小，判断lhs是否大于等于rhs。
+- `reverse_iterator_t<Iterator> operator+(typename reverse_iterator_t<Iterator>::difference_type n, const reverse_iterator_t<Iterator>& rev_it)`: 允许将偏移量加在反向迭代器之前。
+- `typename reverse_iterator_t<Iterator>::difference_type operator-(const reverse_iterator_t<Iterator>& lhs, const reverse_iterator_t<Iterator>& rhs)`: 计算两个反向迭代器之间的距离。
+
+### 注意事项
+
+该反向迭代器类利用了C++的迭代器特性，能够自动处理随机访问迭代器和双向迭代器的移动操作。此外，文件还定义了虚基类保护（`#ifndef _REVERSE_ITERATOR_H_` 和 `#define _REVERSE_ITERATOR_H_`），确保头文件在编译过程中不被重复包含。
+
+### 使用场景
+
+`reverse_iterator_t`可以用于任何支持迭代器的容器，允许用户以反向顺序访问容器中的元素。例如，在遍历一个vector时，可以使用反向迭代器从最后一个元素开始往前遍历。
