@@ -23,6 +23,7 @@ namespace tinySTL {
 			template<class U, class V>
 			pair(const pair<U, V>& p);
 			pair(const first_type& a, const second_type& b);
+			pair& operator =(const pair& p);
 			void swap(pair& p);
 		public:
 			template<class T1, class T2>
@@ -40,6 +41,59 @@ namespace tinySTL {
 			template<class T1, class T2>
 			friend void swap(pair<T1, T2>& p1, pair<T1, T2>& p2);
 	};
+	template<class T1, class T2>
+	template<class U, class V>
+	pair<T1, T2>::pair(const pair<U, V>& p) : first(p.first), second(p.second) {}
+	template<class T1, class T2>
+	pair<T1, T2>::pair(const first_type& a, const second_type& b) : first(a), second(b) {}
+	template<class T1, class T2>
+	pair<T1, T2>& pair<T1, T2>::operator =(const pair<T1, T2>& p) {
+		if (this != &p) {
+			first = p.first;
+			second = p.second;
+		}
+		return *this;
+	}
+	template<class T1, class T2>
+	void pair<T1, T2>::swap(pair<T1, T2>& p) {
+		tinySTL::swap(first, p.first);
+		tinySTL::swap(second, p.second);
+	}
 
+	template<class T1, class T2>
+	bool operator == (const pair<T1, T2>& p1, const pair<T1, T2>& p2) {
+		return p1.first == p2.first && p1.second == p2.second;
+	}
+	template<class T1, class T2>
+	bool operator != (const pair<T1, T2>& p1, const pair<T1, T2>& p2) {
+		return !(p1 == p2);
+	}
+	template<class T1, class T2>
+	bool operator < (const pair<T1, T2>& p1, const pair<T1, T2>& p2) {
+		return p1.first < p2.first || (p1.first == p2.first && p1.second < p2.second);
+	}
+	template<class T1, class T2>
+	bool operator > (const pair<T1, T2>& p1, const pair<T1, T2>& p2) {
+		return p2 < p1;
+	}
+	template<class T1, class T2>
+	bool operator <= (const pair<T1, T2>& p1, const pair<T1, T2>& p2) {
+		return !(p2 < p1);
+	}
+	template<class T1, class T2>
+	bool operator >= (const pair<T1, T2>& p1, const pair<T1, T2>& p2) {
+		return !(p1 < p2);
+	}
+	template<class T1, class T2>
+	void swap(pair<T1, T2>& p1, pair<T1, T2>& p2) {
+		p1.swap(p2);
+	}
 
-#endif // !
+	//*****[make_pair]*****//
+	template<class U, class V>
+	pair<U, V> make_pair(const U& u, const V& v) {
+		return pair<U, V>(u, v);
+	}
+}
+
+#endif // _UTILITY_H_

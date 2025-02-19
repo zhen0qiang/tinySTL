@@ -433,3 +433,374 @@ DiffCopyInsert
 ### 使用场景
 
 `reverse_iterator_t`可以用于任何支持迭代器的容器，允许用户以反向顺序访问容器中的元素。例如，在遍历一个vector时，可以使用反向迭代器从最后一个元素开始往前遍历。
+
+## Utility.h
+
+### 文件功能概述
+
+`Utility.h` 是 TinySTL 库中的一个头文件，主要提供了一些实用的工具函数和数据结构。这些工具在实现 STL（标准模板库）的其他组件时会被频繁使用。文件中定义了两个主要部分：`swap` 函数和 `pair` 结构体。
+
+#### 1. `swap` 函数
+
+`swap` 函数用于交换两个相同类型的对象的值。该函数的模板实现了对任意类型的对象进行交换，只需传递两个引用即可。
+
+**函数定义**
+
+```cpp
+template<class T>
+void swap(T& a, T& b){
+    T temp = a;
+    a = b;
+    b = temp;
+}
+```
+
+DiffCopyInsert
+
+**使用示例**
+
+```cpp
+int x = 10;
+int y = 20;
+TinySTL::swap(x, y);
+// 此时 x = 20, y = 10
+```
+
+
+
+#### 2. `pair` 结构体
+
+`pair` 结构体是一个简单的容器，可以存储两个不同类型的对象。`pair` 结构体提供了对这两个对象的访问，并且可以进行赋值和比较操作。
+
+**结构体定义**
+
+```cpp
+template<class T1, class T2>
+struct pair{
+public:
+    typedef T1 first_type;
+    typedef T2 second_type;
+public:
+    T1 first;
+    T2 second;
+public:
+    pair(){};
+    template<class U, class V> 
+    pair(const pair<U, V>& pr);
+    pair(const first_type& a, const second_type& b);
+    pair& operator= (const pair& pr);
+    void swap(pair& pr);
+public:
+    template <class T1, class T2>
+    friend bool operator== (const pair<T1, T2>& lhs, const pair<T1, T2>& rhs);
+    template <class T1, class T2>
+    friend bool operator!= (const pair<T1, T2>& lhs, const pair<T1, T2>& rhs);
+    template <class T1, class T2>
+    friend bool operator<  (const pair<T1, T2>& lhs, const pair<T1, T2>& rhs);
+    template <class T1, class T2>
+    friend bool operator<= (const pair<T1, T2>& lhs, const pair<T1, T2>& rhs);
+    template <class T1, class T2>
+    friend bool operator>  (const pair<T1, T2>& lhs, const pair<T1, T2>& rhs);
+    template <class T1, class T2>
+    friend bool operator>= (const pair<T1, T2>& lhs, const pair<T1, T2>& rhs);
+    template <class T1, class T2>
+    friend void swap(pair<T1, T2>& x, pair<T1, T2>& y);
+};
+```
+
+DiffCopyInsert
+
+- **成员变量**
+  - `first`: 类型为 `T1` 的第一个对象。
+  - `second`: 类型为 `T2` 的第二个对象。
+- **构造函数**
+  - 默认构造函数：创建一个未初始化的 `pair` 对象。
+  - 模板构造函数：可以从另一个 `pair` 对象（类型为 `U` 和 `V`）构造一个 `pair` 对象。
+  - 参数构造函数：可以使用两个值来初始化 `pair` 对象的 `first` 和 `second` 成员。
+- **赋值操作符**
+  - 用于将另一个 `pair` 对象的值赋给当前对象。
+- **成员函数**
+  - `swap`: 交换当前 `pair` 对象与另一个 `pair` 对象的值。
+- **友元函数**
+  - 定义了 `pair` 对象之间的比较操作符 (`==`, `!=`, `<`, `<=`, `>`, `>=`) 和 `swap` 操作符，使得这些操作可以直接在 `pair` 对象之间进行。
+
+**使用示例**
+
+```cpp
+TinySTL::pair<int, std::string> p1(1, "hello");
+TinySTL::pair<int, std::string> p2(2, "world");
+
+// 使用 swap 成员函数
+p1.swap(p2);
+// 此时 p1 是 (2, "world"), p2 是 (1, "hello")
+
+// 使用全局 swap 函数
+TinySTL::swap(p1, p2);
+// 此时 p1 是 (1, "hello"), p2 是 (2, "world")
+
+// 使用比较操作符
+if (p1 < p2) {
+    std::cout << "p1 is less than p2" << std::endl;
+}
+```
+
+DiffCopyInsert
+
+#### 3. `make_pair` 函数
+
+`make_pair` 函数是一个辅助函数，用于方便地创建 `pair` 对象。只需要传递两个参数，函数会自动推导类型并返回对应的 `pair` 对象。
+
+**函数定义**
+
+```cpp
+template<class U, class V>
+pair<U, V> make_pair(const U& u, const V& v){
+    return pair<U, V>(u, v);
+}
+```
+
+DiffCopyInsert
+
+**使用示例**
+
+```cpp
+TinySTL::pair<int, std::string> p = TinySTL::make_pair(1, "hello");
+// 创建了一个 pair 对象，p.first 是 1, p.second 是 "hello"
+```
+
+DiffCopyInsert
+
+### 文档
+
+**文件名**：Utility.h
+
+**描述**: `Utility.h` 文件包含了一种非常基础却极其重要的工具：`swap` 函数和 `pair` 结构体。`swap` 函数用于交换两个对象的值，简化了对象交换的操作。`pair` 结构体用于存储两个不同类型的对象，提供了方便的访问、赋值和比较功能。该文件在实现 STL 库的其他组件时被广泛使用，为其他复杂数据结构提供了必要的支持。
+
+**包含的类和函数**:
+
+1. `swap` 函数
+
+   - 功能：交换两个相同类型的对象的值。
+   - 使用示例：`TinySTL::swap(x, y);` 交换 `x` 和 `y` 的值。
+
+2. `pair` 结构体
+
+   - 功能：存储两个不同类型的对象。
+
+   - 成员变量：`first` 和 `second`。
+
+   - 构造函数：默认构造函数、模板构造函数和参数构造函数。
+
+   - 赋值操作符：`=`
+
+   - 成员函数：`swap`
+
+   - 友元函数：`==`, `!=`, `<`, `<=`, `>`, `>=`, `swap`
+
+   - 使用示例：
+
+     ```cpp
+     TinySTL::pair<int, std::string> p(1, "hello");
+     p.swap(p2);
+     ```
+
+     DiffCopyInsert
+
+3. `make_pair` 函数
+
+   - 功能：方便地创建 `pair` 对象。
+   - 使用示例：`TinySTL::pair<int, std::string> p = TinySTL::make_pair(1, "hello");`
+
+**注意事项**:
+
+- 使用 `pair` 结构体时，需要确保传递给 `swap` 函数的对象是相同类型的 `pair`。
+- `make_pair` 函数可以自动推导类型，简化了代码编写。
+
+## UninitializedFunctions.h
+
+### 文件概述
+
+`UninitializedFunctions.h` 是 TinySTL 库中的一部分，主要负责内存的非初始化复制和填充操作。在 STL 中，非初始化操作指的是在未初始化的内存中直接进行复制或填充，而不需要调用对象的构造函数。这在需要高效地操作内存而不需要构造对象的情况下非常有用，比如在动态内存管理、容器实现以及内存池等场景中。
+
+### 详细文档
+
+#### 头文件保护
+
+```cpp
+#ifndef _UNINITIALIZED_FUNCTIONS_H_
+#define _UNINITIALIZED_FUNCTIONS_H_
+```
+
+DiffCopyInsert
+
+这部分代码用于防止重复包含头文件。只有当 `_UNINITIALIZED_FUNCTIONS_H_` 没有被定义时，才会继续编译该头文件的内容。
+
+#### 包含的头文件
+
+```cpp
+#include "Algorithm.h"
+#include "Construct.h"
+#include "Iterator.h"
+#include "TypeTraits.h"
+```
+
+DiffCopyInsert
+
+这些头文件包含了 `tinySTL` 库中相关的功能，分别是算法操作、对象构造、迭代器特性以及类型特性。
+
+#### 命名空间
+
+```cpp
+namespace TinySTL{
+```
+
+DiffCopyInsert
+
+所有的代码都定义在 `TinySTL` 命名空间中，以避免与其他库或项目中的标识符冲突。
+
+#### 函数模板: `uninitialized_copy`
+
+```cpp
+template<class InputIterator, class ForwardIterator>
+ForwardIterator uninitialized_copy(InputIterator first, InputIterator last, ForwardIterator result){
+    typedef typename _type_traits<iterator_traits<InputIterator>::value_type>::is_POD_type isPODType;
+    return _uninitialized_copy_aux(first, last, result, isPODType());
+}
+```
+
+DiffCopyInsert
+
+**功能:** 将 `[first, last)` 范围内的元素复制到 `result` 开始的未初始化内存区域。 **参数:**
+
+- `InputIterator first`: 输入迭代器，指向要复制的元素范围的起始位置。
+- `InputIterator last`: 输入迭代器，指向要复制的元素范围的结束位置（不包含该位置的元素）。
+- `ForwardIterator result`: 前向迭代器，指向目的内存区域的起始位置。 **返回值:** 返回一个指向目的内存区域结束位置的前向迭代器（不包含该位置的元素）。 **工作原理:** 通过 `_type_traits` 模板检测输入迭代器所指向元素的类型是否为 POD（Plain Old Data），即是否为简单数据类型（如 `int`, `float` 等）。如果是，则调用 `_uninitialized_copy_aux` 的 `_true_type` 版本，使用 `memcpy` 进行内存复制；否则调用 `_false_type` 版本，通过逐一调用 `construct` 函数来复制元素。
+
+#### 辅助函数模板: `_uninitialized_copy_aux`
+
+```cpp
+template<class InputIterator, class ForwardIterator>
+ForwardIterator _uninitialized_copy_aux(InputIterator first, InputIterator last,
+    ForwardIterator result, _true_type){
+    memcpy(result, first, (last - first) * sizeof(*first));
+    return result + (last - first);
+}
+template<class InputIterator, class ForwardIterator>
+ForwardIterator _uninitialized_copy_aux(InputIterator first, InputIterator last,
+    ForwardIterator result, _false_type){
+    int i = 0;
+    for (; first != last; ++first, ++i){
+        construct((result + i), *first);
+    }
+    return (result + i);
+}
+```
+
+DiffCopyInsert
+
+**功能:** 辅助函数，用于实现 `uninitialized_copy` 的具体非初始化复制操作。 **参数:**
+
+- `InputIterator first`: 输入迭代器，指向要复制的元素范围的起始位置。
+- `InputIterator last`: 输入迭代器，指向要复制的元素范围的结束位置。
+- `ForwardIterator result`: 前向迭代器，指向目的内存区域的起始位置。
+- `_true_type` 或 `_false_type`: 辅助类型，用于标记所操作的数据类型是否为 POD 类型。 **工作原理:** 根据传入的 `_true_type` 或 `_false_type` 参数，选择使用 `memcpy` 进行内存复制，或者通过逐一调用 `construct` 函数来复制元素。
+
+#### 函数模板: `uninitialized_fill`
+
+```cpp
+template<class ForwardIterator, class T>
+void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T& value){
+    typedef typename _type_traits<T>::is_POD_type isPODType;
+    _uninitialized_fill_aux(first, last, value, isPODType());
+}
+```
+
+DiffCopyInsert
+
+**功能:** 将 `[first, last)` 范围内的每个位置用给定的 `value` 值填充，填充到未初始化的内存区域。 **参数:**
+
+- `ForwardIterator first`: 前向迭代器，指向要填充的内存区域的起始位置。
+- `ForwardIterator last`: 前向迭代器，指向要填充的内存区域的结束位置（不包含该位置的内存）。
+- `const T& value`: 要填充的值。 **工作原理:** 使用 `_type_traits` 模板检测类型 `T` 是否为 POD 类型。如果是，则调用 `_uninitialized_fill_aux` 的 `_true_type` 版本，使用 `fill` 进行内存填充；否则调用 `_false_type` 版本，通过逐一调用 `construct` 函数来填充元素。
+
+#### 辅助函数模板: `_uninitialized_fill_aux`
+
+```cpp
+template<class ForwardIterator, class T>
+void _uninitialized_fill_aux(ForwardIterator first, ForwardIterator last,
+    const T& value, _true_type){
+    fill(first, last, value);
+}
+template<class ForwardIterator, class T>
+void _uninitialized_fill_aux(ForwardIterator first, ForwardIterator last,
+    const T& value, _false_type){
+    for (; first != last; ++first){
+        construct(first, value);
+    }
+}
+```
+
+DiffCopyInsert
+
+**功能:** 辅助函数，用于实现 `uninitialized_fill` 的具体非初始化填充操作。 **参数:**
+
+- `ForwardIterator first`: 前向迭代器，指向要填充的内存区域的起始位置。
+- `ForwardIterator last`: 前向迭代器，指向要填充的内存区域的结束位置。
+- `const T& value`: 要填充的值。
+- `_true_type` 或 `_false_type`: 辅助类型，用于标记所操作的数据类型是否为 POD 类型。 **工作原理:** 根据传入的 `_true_type` 或 `_false_type` 参数，选择调用 `fill` 函数进行内存填充，或者通过逐一调用 `construct` 函数来填充元素。
+
+#### 函数模板: `uninitialized_fill_n`
+
+```cpp
+template<class ForwardIterator, class Size, class T>
+inline ForwardIterator uninitialized_fill_n(ForwardIterator first, Size n, const T& x){
+    typedef typename _type_traits<T>::is_POD_type isPODType;
+    return _uninitialized_fill_n_aux(first, n, x, isPODType());
+}
+```
+
+DiffCopyInsert
+
+**功能:** 将从 `first` 开始的 `n` 个元素位置用给定的 `value` 值填充，填充到未初始化的内存区域。 **参数:**
+
+- `ForwardIterator first`: 前向迭代器，指向要填充的内存区域的起始位置。
+- `Size n`: 要填充的元素数量。
+- `const T& x`: 要填充的值。 **返回值:** 返回一个指向目的内存区域结束位置的前向迭代器。 **工作原理:** 使用 `_type_traits` 模板检测类型 `T` 是否为 POD 类型。如果是，则调用 `_uninitialized_fill_n_aux` 的 `_true_type` 版本，使用 `fill_n` 函数进行内存填充；否则调用 `_false_type` 版本，通过逐一调用 `construct` 函数来填充元素。
+
+#### 辅助函数模板: `_uninitialized_fill_n_aux`
+
+```cpp
+template<class ForwardIterator, class Size, class T>
+ForwardIterator _uninitialized_fill_n_aux(ForwardIterator first, Size n, const T& x, _true_type){
+    return fill_n(first, n, x);
+}
+template<class ForwardIterator, class Size, class T>
+ForwardIterator _uninitialized_fill_n_aux(ForwardIterator first, Size n, const T& x, _false_type){
+    int i = 0;
+    for (; i != n; ++i){
+        construct((T*)(first + i), x);
+    }
+    return (first + i);
+}
+```
+
+DiffCopyInsert
+
+**功能:** 辅助函数，用于实现 `uninitialized_fill_n` 的具体非初始化填充操作。 **参数:**
+
+- `ForwardIterator first`: 前向迭代器，指向要填充的内存区域的起始位置。
+- `Size n`: 要填充的元素数量。
+- `const T& x`: 要填充的值。
+- `_true_type` 或 `_false_type`: 辅助类型，用于标记所操作的数据类型是否为 POD 类型。 **工作原理:** 根据传入的 `_true_type` 或 `_false_type` 参数，选择调用 `fill_n` 函数进行内存填充，或者通过逐一调用 `construct` 函数来填充元素。
+
+#### 结束命名空间和头文件保护
+
+```cpp
+}
+#endif
+```
+
+DiffCopyInsert
+
+这部分代码用于结束 `TinySTL` 命名空间以及关闭头文件保护。
+
